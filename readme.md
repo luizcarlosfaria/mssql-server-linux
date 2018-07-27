@@ -27,7 +27,7 @@ This variable is mandatory and specifies the password that will be set for the M
 This variable is optional and allows you to specify the name of a database to be created on image startup. If a user/password was supplied (see below) then that user will be granted owner access (corresponding to db_owner role) to this database.
 
 ### **MSSQL_DATABASE_COLLATE** 
-By detault the new database will be crete with **SQL_Latin1_General_CP1_CI_AI** collate. This environment variable can be used to set another ollation. [See all supported SQL Server Collations](ttps://github.com/docker-gallery/mssql-server-linux/blob/master/build-and-test.sh).
+By detault the new database will be crete with **SQL_Latin1_General_CP1_CI_AI** collate. This environment variable can be used to set another ollation. [See all supported SQL Server Collations](ttps://github.com/docker-gallery/mssql-server-linux/blob/master/all_collations.txt).
 
 ### **MSSQL_USER** and **MSSQL_PASSWORD**. 
 These variables are optional, used in conjunction to create a new user and to set that user's password. This user will be granted owner permissions (see above) for the database specified by the MSSQL_DATABASE variable. Both variables are required for a user to be created.
