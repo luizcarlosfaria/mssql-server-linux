@@ -1,0 +1,4 @@
+*.md
+*.txt
+.gitignore
+.git
