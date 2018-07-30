@@ -14,4 +14,7 @@ COPY ./docker-entrypoint.sh             /usr/local/bin/
 
 COPY ./docker-entrypoint-initdb.sh      /usr/local/bin/
 
+RUN  chmod +x ./docker-entrypoint.sh \
+ chmod +x ./docker-entrypoint-initdb.sh
+
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
