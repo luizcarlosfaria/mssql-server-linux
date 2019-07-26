@@ -1,4 +1,4 @@
-FROM microsoft/mssql-server-linux
+FROM mcr.microsoft.com/mssql/server:2017-latest-ubuntu
 LABEL AUTHOR="Luiz Carlos Faria <luizcarlosfaria@gmail.com>"
 
 VOLUME /docker-entrypoint-initdb.d

@@ -1,3 +1,3 @@
-#!/bin/bash
+#!/usr/bin/env bash
 echo "$0: Starting SQL Server"
 docker-entrypoint-initdb.sh & /opt/mssql/bin/sqlservr
