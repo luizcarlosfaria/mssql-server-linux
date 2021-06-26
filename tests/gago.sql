@@ -1,4 +1,8 @@
-USE [db01]
+
+CREATE DATABASE [gago]
+GO
+
+USE [gago]
 GO
 
 /****** Object:  Table [dbo].[Teste]    Script Date: 26/06/2021 01:44:17 ******/
@@ -20,5 +24,5 @@ CREATE TABLE [dbo].[Teste](
 GO
 
 
-  insert into [db01].[dbo].[Teste] ([Name]) values ('A1');
-  insert into [db01].[dbo].[Teste] ([Name]) values ('A2');
+  insert into [gago].[dbo].[Teste] ([Name]) values ('A1');
+  insert into [gago].[dbo].[Teste] ([Name]) values ('A2');
