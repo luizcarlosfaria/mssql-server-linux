@@ -2,7 +2,6 @@ version: "3.7"
 
 services:
     sql:
-        image: registry.oragon.io/library/mssql-server-linux:2019-latest
         build:
             context: .
         environment: {

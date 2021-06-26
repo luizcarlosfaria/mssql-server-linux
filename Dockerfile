@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/mssql/server:2019-latest
+FROM mcr.microsoft.com/mssql/server:2017-latest
 LABEL AUTHOR="Luiz Carlos Faria <luizcarlosfaria@gmail.com>"
 
 	
@@ -19,9 +19,4 @@ RUN chmod +x /usr/local/bin/docker-entrypoint-initdb.sh
 
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 
-RUN mkdir cd /home/mssql/
-
-RUN chown mssql /home/mssql/
-
-USER mssql
 
