@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-if [ ! -f /init.lock ]; then
+if [ ! -f ~/init.lock ]; then
 
   # wait for database to start...
   for i in {40..0}; do
-    if sqlcmd -U SA -P $SA_PASSWORD -Q 'SELECT 1;' &> /dev/null; then
+    if /opt/mssql-tools/bin/sqlcmd -U SA -P $SA_PASSWORD -Q 'SELECT 1;' &> /dev/null; then
       echo "$0: SQL Server started"
       break
     fi
@@ -14,11 +14,12 @@ if [ ! -f /init.lock ]; then
 
   echo "$0: Initializing database"
 
+  touch ~/tmp.sql
 
   #BEGIN DATABASE CREATION
   if [ "$MSSQL_DATABASE" ]; then
 
-    cat > /tmp.sql <<-EOSQL
+    cat > ~/tmp.sql <<-EOSQL
     CREATE DATABASE [${MSSQL_DATABASE}] 
     CONTAINMENT = NONE
     ON  PRIMARY ( 
@@ -113,9 +114,9 @@ if [ ! -f /init.lock ]; then
     GO
 EOSQL
 
-    sqlcmd -U SA -P $SA_PASSWORD -i /tmp.sql
+    /opt/mssql-tools/bin/sqlcmd -U SA -P $SA_PASSWORD -i ~/tmp.sql
 
-    rm -f /tmp.sql
+    rm -f ~/tmp.sql
 
   fi
   #END DATABASE CREATION
@@ -131,21 +132,21 @@ EOSQL
 
     fi
 
-    cat > /tmp.sql <<-EOSQL
+    cat > ~/tmp.sql <<-EOSQL
     USE [master]
     GO
     CREATE LOGIN [${MSSQL_USER}] WITH PASSWORD=N'${MSSQL_PASSWORD}', DEFAULT_DATABASE=[${DEFAULT_DB}], CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF    
     GO
 EOSQL
 
-    sqlcmd -U SA -P $SA_PASSWORD -i /tmp.sql
+    /opt/mssql-tools/bin/sqlcmd -U SA -P $SA_PASSWORD -i ~/tmp.sql
 
-    rm -f /tmp.sql
+    rm -f ~/tmp.sql
 
     #BEGIN BIND USER TO DATABASE AS OWNER
     if [ "$MSSQL_DATABASE" ]; then
 
-      cat > /tmp.sql <<-EOSQL
+      cat > ~/tmp.sql <<-EOSQL
       USE [${MSSQL_DATABASE}]
       GO
       CREATE USER [${MSSQL_USER}] FOR LOGIN [${MSSQL_USER}]
@@ -156,9 +157,9 @@ EOSQL
       GO
 EOSQL
 
-      sqlcmd -U SA -P $SA_PASSWORD -i /tmp.sql
+      /opt/mssql-tools/bin/sqlcmd -U SA -P $SA_PASSWORD -i ~/tmp.sql
 
-      rm -f /tmp.sql
+      rm -f ~/tmp.sql
 
     fi
     #END BIND USER TO DATABASE AS OWNER
@@ -171,7 +172,7 @@ EOSQL
   for f in /docker-entrypoint-initdb.d/*; do
     case "$f" in
       *.sh)     echo "$0: running $f"; . "$f" ;;
-      *.sql)    echo "$0: running $f"; sqlcmd -U SA -P $SA_PASSWORD -X -i  "$f"; echo ;;
+      *.sql)    echo "$0: running $f"; /opt/mssql-tools/bin/sqlcmd -U SA -P $SA_PASSWORD -X -i  "$f"; echo ;;
       *)        echo "$0: ignoring $f" ;;
     esac
     echo
@@ -181,7 +182,7 @@ EOSQL
   echo "$0: SQL Server Database ready"
 
 
-  touch /init.lock
+  touch ~/init.lock
 
 
 fi
