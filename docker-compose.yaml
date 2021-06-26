@@ -1,0 +1,19 @@
+version: "3.7"
+
+services:
+    sql:
+        image: registry.oragon.io/library/mssql-server-linux:2019-latest
+        build:
+            context: .
+        environment: {
+            "ACCEPT_EULA" : "Y",
+            "SA_PASSWORD" : "8k3W2C2BVzAW9p",
+            "MSSQL_DATABASE" : "db01",
+            "MSSQL_DATABASE_COLLATE" : "SQL_Latin1_General_CP1_CI_AI",
+            "MSSQL_USER" : "bbb",
+            "MSSQL_PASSWORD" : "ccc",
+        }
+        ports: 
+            - 1433:1433
+        volumes: 
+            - "./tests/:/docker-entrypoint-initdb.d/"
