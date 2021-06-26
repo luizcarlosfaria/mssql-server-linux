@@ -16,4 +16,4 @@ services:
         ports: 
             - 1433:1433
         volumes: 
-            - "./tests/:/docker-entrypoint-initdb.d/"
+            - "./scripts/:/docker-entrypoint-initdb.d/"

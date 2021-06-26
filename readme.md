@@ -3,18 +3,23 @@
 ## Same **microsoft/mssql-server-linux** docker image parameterizable like official **MySQL** and **Postgres** docker images
 
 ```
-docker run \
---rm \
--it \
--e 'ACCEPT_EULA=Y' \
--e 'MSSQL_PID=Express' \
--e 'SA_PASSWORD=8k3W2C2BVzAW9p' \
--e 'MSSQL_DATABASE=db01' \
--e 'MSSQL_DATABASE_COLLATE=SQL_Latin1_General_CP1_CI_AI' \
--e 'MSSQL_USER=new_username' \
--e 'MSSQL_PASSWORD=new_password' \
--p 1433:1433 \
-luizcarlosfaria/mssql-server-linux:latest
+version: "3.7"
+
+services:
+    sql:
+        image: luizcarlosfaria/mssql-server-linux:2019-latest
+        environment: {
+            "ACCEPT_EULA" : "Y",
+            "SA_PASSWORD" : "8k3W2C2BVzAW9p",
+            "MSSQL_DATABASE" : "db01",
+            "MSSQL_DATABASE_COLLATE" : "SQL_Latin1_General_CP1_CI_AI",
+            "MSSQL_USER" : "db01_dbowner_username",
+            "MSSQL_PASSWORD" : "db01_dbowner_password",
+        }
+        ports: 
+            - 1433:1433
+        volumes: 
+            - "./scripts/:/docker-entrypoint-initdb.d/"
 ```
 
 *Dockerfile* | https://github.com/docker-gallery/mssql-server-linux

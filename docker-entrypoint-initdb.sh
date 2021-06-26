@@ -112,7 +112,7 @@ if [ ! -f ~/init.lock ]; then
     GO
     IF NOT EXISTS (SELECT name FROM sys.filegroups WHERE is_default=1 AND name = N'PRIMARY') ALTER DATABASE [${MSSQL_DATABASE}] MODIFY FILEGROUP [PRIMARY] DEFAULT
     GO
-EOSQL
+EOSQL #ELSE DATABASE CREATION
 
     /opt/mssql-tools/bin/sqlcmd -U SA -P $SA_PASSWORD -i ~/tmp.sql
 
@@ -123,7 +123,7 @@ EOSQL
 
   #BEGIN USER CREATION
   if [ "$MSSQL_USER" -a "$MSSQL_PASSWORD" ]; then
-    
+
     DEFAULT_DB="master"
 
     if [ "$MSSQL_DATABASE" ]; then
@@ -137,7 +137,7 @@ EOSQL
     GO
     CREATE LOGIN [${MSSQL_USER}] WITH PASSWORD=N'${MSSQL_PASSWORD}', DEFAULT_DATABASE=[${DEFAULT_DB}], CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF    
     GO
-EOSQL
+EOSQL #ELSE USER CREATION
 
     /opt/mssql-tools/bin/sqlcmd -U SA -P $SA_PASSWORD -i ~/tmp.sql
 
@@ -167,7 +167,6 @@ EOSQL
   fi
   #END USER CREATION
 
-
   #BEGIN INITIALIZE SQL SERVER WITH SCRIPTS
   for f in /docker-entrypoint-initdb.d/*; do
     case "$f" in
@@ -179,10 +178,8 @@ EOSQL
   done
   #END INITIALIZE SQL SERVER WITH SCRIPTS
 
-  echo "$0: SQL Server Database ready"
-
-
   touch ~/init.lock
 
-
 fi
+
+echo "$0: SQL Server Database ready"
