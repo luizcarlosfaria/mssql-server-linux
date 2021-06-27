@@ -1,20 +1,22 @@
 #!/usr/bin/env bash
 
+
+
 if [ ! -f ~/init.lock ]; then
 
-  # wait for database to start...
-  for i in {40..0}; do
-    if /opt/mssql-tools/bin/sqlcmd -U SA -P $SA_PASSWORD -Q 'SELECT 1;' &> /dev/null; then
-      echo "$0: SQL Server started"
-      break
-    fi
-    echo "$0: SQL Server startup in progress..."
-    sleep 1
-  done
+    # wait for database to start...
+    for i in {40..0}; do
+      if /opt/mssql-tools/bin/sqlcmd -U SA -P $SA_PASSWORD -Q 'SELECT 1;' &> /dev/null; then
+        echo "$0: SQL Server started"
+        break
+      fi
+      echo "$0: SQL Server startup in progress..."
+      sleep 1
+    done
 
-  echo "$0: Initializing database"
+    echo "$0: Initializing database"
 
-  touch ~/tmp.sql
+    touch ~/tmp.sql
 
   #BEGIN DATABASE CREATION
   if [ "$MSSQL_DATABASE" ]; then
@@ -112,7 +114,8 @@ if [ ! -f ~/init.lock ]; then
     GO
     IF NOT EXISTS (SELECT name FROM sys.filegroups WHERE is_default=1 AND name = N'PRIMARY') ALTER DATABASE [${MSSQL_DATABASE}] MODIFY FILEGROUP [PRIMARY] DEFAULT
     GO
-EOSQL #ELSE DATABASE CREATION
+
+	EOSQL
 
     /opt/mssql-tools/bin/sqlcmd -U SA -P $SA_PASSWORD -i ~/tmp.sql
 
@@ -137,7 +140,7 @@ EOSQL #ELSE DATABASE CREATION
     GO
     CREATE LOGIN [${MSSQL_USER}] WITH PASSWORD=N'${MSSQL_PASSWORD}', DEFAULT_DATABASE=[${DEFAULT_DB}], CHECK_EXPIRATION=OFF, CHECK_POLICY=OFF    
     GO
-EOSQL #ELSE USER CREATION
+	EOSQL
 
     /opt/mssql-tools/bin/sqlcmd -U SA -P $SA_PASSWORD -i ~/tmp.sql
 
@@ -146,20 +149,20 @@ EOSQL #ELSE USER CREATION
     #BEGIN BIND USER TO DATABASE AS OWNER
     if [ "$MSSQL_DATABASE" ]; then
 
-      cat > ~/tmp.sql <<-EOSQL
-      USE [${MSSQL_DATABASE}]
-      GO
-      CREATE USER [${MSSQL_USER}] FOR LOGIN [${MSSQL_USER}]
-      GO
-      USE [${MSSQL_DATABASE}]
-      GO
-      ALTER ROLE [db_owner] ADD MEMBER [${MSSQL_USER}]
-      GO
-EOSQL
+      	cat > ~/tmp.sql <<-EOSQL
+		USE [${MSSQL_DATABASE}]
+		GO
+		CREATE USER [${MSSQL_USER}] FOR LOGIN [${MSSQL_USER}]
+		GO
+		USE [${MSSQL_DATABASE}]
+		GO
+		ALTER ROLE [db_owner] ADD MEMBER [${MSSQL_USER}]
+		GO
+		EOSQL
 
-      /opt/mssql-tools/bin/sqlcmd -U SA -P $SA_PASSWORD -i ~/tmp.sql
+      	/opt/mssql-tools/bin/sqlcmd -U SA -P $SA_PASSWORD -i ~/tmp.sql
 
-      rm -f ~/tmp.sql
+      	rm -f ~/tmp.sql
 
     fi
     #END BIND USER TO DATABASE AS OWNER
