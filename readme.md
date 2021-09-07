@@ -57,6 +57,13 @@ MSSQL_PID is the Product ID (PID) or Edition that the container will run with. A
 
 This image extends official mssql-server-linux. See more on [official **mssql-server-linux** image](https://hub.docker.com/r/microsoft/mssql-server-linux/) to understand license and find other Product Id's.
 
+### **MSSQL_ATTACH_DATABASE_NAME** and **MSSQL_ATTACH_DATABASE_PATH**
+These environment variables are optional, used to attach a database to server. 
+- **MSSQL_ATTACH_DATABASE_NAME** indicates the name of database **and** is used to determine the name of the ``.mdf`` and ``.ldf`` files;
+- **MSSQL_ATTACH_DATABASE_PATH** indicates the base path of the ``.mdf`` and ``.ldf`` files;
+
+#### Example
+Using `MSSQL_ATTACH_DATABASE_NAME = MyDatabase` and `MSSQL_ATTACH_DATABASE_PATH = /var/opt/mssql/data/custom-location/` will attach a database named **MyDatabase** thas uses **/var/opt/mssql/data/custom-location/MyDatabase**.mdf and **/var/opt/mssql/data/custom-location/MyDatabase**_log.ldf files; 
 
 ## Volumes
 
