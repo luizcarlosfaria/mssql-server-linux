@@ -5,18 +5,39 @@
 if [ ! -f ~/init.lock ]; then
 
     # wait for database to start...
-    for i in {40..0}; do
-      if /opt/mssql-tools/bin/sqlcmd -U SA -P $SA_PASSWORD -Q 'SELECT 1;' &> /dev/null; then
-        echo "$0: SQL Server started"
-        break
-      fi
-      echo "$0: SQL Server startup in progress..."
-      sleep 1
-    done
+  for i in {60..0}; do
+    if /opt/mssql-tools/bin/sqlcmd -U SA -P $SA_PASSWORD -Q 'SELECT 1;' &> /dev/null; then
+      echo "$0: SQL Server started"
+      break
+    fi
+    echo "$0: SQL Server startup in progress..."
+    sleep 1
+  done
 
-    echo "$0: Initializing database"
+  echo "$0: Initializing database"
 
-    touch ~/tmp.sql
+  touch ~/tmp.sql
+
+  if [ "$MSSQL_ATTACH_DATABASE_NAME" -a "$MSSQL_ATTACH_DATABASE_PATH" ]; then
+    
+    touch ~/attach_tmp.sql
+    cat > ~/attach_tmp.sql <<-EOATTACHSQL
+    USE [master]
+    GO
+    
+    CREATE DATABASE [${MSSQL_ATTACH_DATABASE_NAME}] ON 
+    ( FILENAME = N'${MSSQL_ATTACH_DATABASE_PATH}/${MSSQL_ATTACH_DATABASE_NAME}.mdf' ),
+    ( FILENAME = N'${MSSQL_ATTACH_DATABASE_PATH}/${MSSQL_ATTACH_DATABASE_NAME}_log.ldf' )
+    FOR ATTACH
+    
+    GO
+        
+EOATTACHSQL
+
+    /opt/mssql-tools/bin/sqlcmd -U SA -P $SA_PASSWORD -i ~/attach_tmp.sql
+
+    rm -f ~/attach_tmp.sql
+  fi
 
   #BEGIN DATABASE CREATION
   if [ "$MSSQL_DATABASE" ]; then
